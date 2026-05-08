@@ -64,7 +64,7 @@ let knitout;
  const wasteCheckbox = document.getElementById("wasteCheckbox");
 
 
-function updateVisualizer(centerView) {
+async function updateVisualizer(centerView) {
 	updateKnitoutMode();
 
 	let code = editor.getValue();
@@ -85,7 +85,7 @@ function updateVisualizer(centerView) {
 			knitout += '\n';
 		});
 	} else {
-		knitout = evalJS(code);
+		knitout = await evalJS(code);
 	}
 	//console.log(knitout);
 	show.showKnitout.parse(knitout, false, centerView);
@@ -109,7 +109,7 @@ if (false) {
 	TimingMachine.prototype.stretchLoops = function() { }
 
 	const oldUpdateVisualizer = updateVisualizer;
-	updateVisualizer = function timeUpdateVisualizer(centerView) {
+	updateVisualizer = async function timeUpdateVisualizer(centerView) {
 		const TIMING_ITERS = 100;
 
 		//time code generation:
@@ -119,7 +119,7 @@ if (false) {
 			boxInstructions:NaN,
 			otherInstructions:NaN
 		};
-		(() => {
+		(async () => {
 			for (let iter = 0; iter < TIMING_ITERS; ++iter) {
 				let before = performance.now();
 				updateKnitoutMode();
@@ -136,7 +136,7 @@ if (false) {
 						knitout += '\n';
 					});
 				} else {
-					knitout = evalJS(code);
+					knitout = await evalJS(code);
 				}
 
 				const tm = new TimingMachine();
@@ -265,7 +265,7 @@ function updateKnitoutMode() {
 
 editor.getSession().on('change', updateKnitoutMode);
 
-function saveKCode() {
+async function saveKCode() {
 	updateKnitoutMode();
 
 	let code = editor.getValue();
@@ -286,7 +286,7 @@ function saveKCode() {
 			knitout += '\n';
 		});
 	} else {
-		knitout = evalJS(code);
+		knitout = await evalJS(code);
 	}
 
 	if (wasteCheckbox.checked) {
@@ -350,7 +350,7 @@ function convertKnitout(text) {
  }
  toggleKnitout();
 
-function toggleWaste() {
+async function toggleWaste() {
 	updateKnitoutMode();
 
 	let code = editor.getValue();
@@ -371,7 +371,7 @@ function toggleWaste() {
 			knitout += '\n';
 		});
 	} else {
-		knitout = evalJS(code);
+		knitout = await evalJS(code);
 	}
 
 	if (wasteCheckbox.checked) {

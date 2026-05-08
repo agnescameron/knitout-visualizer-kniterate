@@ -1,7 +1,7 @@
 "use strict";
 
 //knitout frontend
-function evalJS(codeText){
+async function evalJS(codeText){
 
 //=========== start of knitout.js =============
 let machine = null; //can set this as machine header value (if provided), and use it to warn about unsupported extensions
@@ -645,8 +645,17 @@ if(typeof(module) !== 'undefined'){
 	}
 
 	try {
-		const run = new Function('require', 'console', codeText);
-		run(require, captureConsole);
+		const run = new Function(
+		    'require',
+		    'console',
+		    `
+		    return (async () => {
+		        ${codeText}
+		    })();
+		    `
+		);
+
+		await run(require, captureConsole);
 	} catch (e) {
 		console.error(`Code failed to run fully:\n ${e}`);
 	}
