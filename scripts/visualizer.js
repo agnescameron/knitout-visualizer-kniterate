@@ -1,7 +1,18 @@
-let editor = ace.edit("editor-text");
-//themes are available here: https://github.com/ajaxorg/ace/tree/master/lib/ace/theme
-editor.setTheme("ace/theme/tomorrow"); // editor lhs
-editor.session.setMode("ace/mode/javascript");
+let editor = document.getElementById("editor-text");
+const options = { light: true };
+cm6.load().textarea(editor, options);
+
+// editor.session.on('changeMode', function(e, session){
+// 	if ("ace/mode/javascript" === session.getMode().$id) {
+// 		if (!!session.$worker) {
+// 			session.$worker.send("setOptions", [{
+// 				"esversion": 11,
+// 				"esnext": false,
+// 			}]);
+// 		}
+// 	}
+// });
+// editor.session.setMode("ace/mode/javascript");
 
 var show = document.getElementById('show'); // visualiser rhs
 
