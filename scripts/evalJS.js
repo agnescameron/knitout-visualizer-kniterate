@@ -618,6 +618,8 @@ if(typeof(module) !== 'undefined'){
 	let captureConsole = {
 		log: function() {
 			console.log.apply(console, arguments);
+			//TODO: DID I COMMENT THIS? what does it do? investigate
+
 			// let str = '';
 			// for (let i = 0; i < arguments.length; ++i) {
 			// 	if (i !== 0) str += ' ';

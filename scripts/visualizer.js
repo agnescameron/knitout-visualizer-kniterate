@@ -1,9 +1,9 @@
 let editor = ace.edit("editor-text");
 //themes are available here: https://github.com/ajaxorg/ace/tree/master/lib/ace/theme
-editor.setTheme("ace/theme/tomorrow");
+editor.setTheme("ace/theme/tomorrow"); // editor lhs
 editor.session.setMode("ace/mode/javascript");
 
-var show = document.getElementById('show');
+var show = document.getElementById('show'); // visualiser rhs
 
 window.addEventListener('resize', function(){
 	show.showKnitout.requestDraw();
@@ -38,19 +38,16 @@ show.showKnitout.onHoverSource = function(source) {
 		editor.session.removeGutterDecoration(oldHoveredRow-1, "knitoutBox");
 	}
 	let line = parseInt(source);
+	line = line-2; // compensate for offset
 	oldHoveredRow = line;
-	if (line === line) {
-		editor.session.addGutterDecoration(oldHoveredRow-1, "knitoutBox");
-	}
+	editor.session.addGutterDecoration(oldHoveredRow-1, "knitoutBox");
 };
 
 show.showKnitout.onDoubleClickSource = function(source) {
 	//console.log("onDoubleClick '" + source + "'"); //DEBUG
 	let line = parseInt(source);
-	if (line === line) {
-		//console.log("Should scroll to " + line);
-		editor.scrollToLine(line-1, true, true, () => {});
-	}
+	line = line-2; // compensate for offset
+	editor.scrollToLine(line-1, true, true, () => {});
 };
 
 document.getElementById("resetZoom").onclick = function (evt) {
