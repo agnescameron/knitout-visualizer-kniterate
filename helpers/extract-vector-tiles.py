@@ -10,6 +10,8 @@ import re
 import math
 import sys
 
+
+## extracts from vector tiles and translates to JS objects
 insvg = 'vector-tiles.svg'
 jsname = 'VectorTilesLib.js'
 
