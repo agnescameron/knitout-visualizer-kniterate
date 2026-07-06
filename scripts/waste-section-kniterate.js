@@ -160,13 +160,14 @@ function parseMainYarns(lines) {
 		// First line is always the cast-on
 		const castOnId = lines[0].split(' ')[1].charAt(0);
 		carriers.push({ id: castOnId, role: null, castOn: true, isMainYarn: true });
-		lines.shift();
+		// lines.shift();
 
 		lines.forEach((ln, idx) => {
 			const info = removeComment(ln).trim().split(' ');
 
 			// Carrier introduced with 'in' command
 			if (info[0] === 'in' && info.length > 1) {
+				console.log(info);
 				const id = info[1].charAt(0);
 				if (!carriers.get(id)) {
 				carriers.push({ id, role: null, castOn: false, isMainYarn: true });
@@ -285,6 +286,8 @@ function generateWasteSection(carrierSet, toDrop) {
 	// cast on direction needs to be opposite
 	// need to keep track of rows from here
 	let rowCount = 0;
+	console.log("main yarns are", carrierSet.mainYarns);
+
 	carrierSet.mainYarns.forEach(carrier => 
 		{
 			rows = 2; // default
