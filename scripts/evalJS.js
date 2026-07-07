@@ -355,7 +355,8 @@ Writer.prototype.speedNumber = function (value) {
 };
 
 Writer.prototype.rollerAdvance = function (value) {
-	machineSupport('roller advance', 'KNITERATE');
+	console.log('yaaa')
+	// machineSupport('roller advance', 'KNITERATE');
 	//TODO: check to make sure it's within the accepted range
 	if (!Number.isInteger(value)) {
 		console.warn(`Ignoring roller advance extension, since provided value: ${value} is not an integer.`);
@@ -385,6 +386,34 @@ Writer.prototype.carrierStoppingDistance = function (value) {
 		console.warn(`Ignoring carrier stopping distance extension, since provided value: ${value} is not a positive integer.`);
 	} else this._operations.push(`x-carrier-stopping-distance ${value}`);
 };
+
+// -- information / state ops -- //
+// agnes added this bit!
+
+Writer.prototype.getCarrierPosition = function(carrierId){
+  for (let i = this._operations.length - 1; i >= 0; i--) {
+    const line = this._operations[i].toString().split(';')[0].trim(); // strip comment
+    const tokens = line.split(/\s+/);
+
+    // need at least: opcode, direction, needle, carrierId
+    if (tokens.length < 4) continue;
+
+    const op = tokens[0];
+    const dir = tokens[1];
+    const carrier = tokens[tokens.length - 1]; // carrier is always last token
+
+    // skip non-stitch operations
+    if (!['knit', 'tuck', 'miss'].includes(op)) continue;
+
+    if (carrier === carrierId) {
+      return dir === '+' ? 'R' : 'L';
+    }
+  }
+
+  return null; // carrier not found in operations
+
+};
+
 
 // --- operations ---//
 Writer.prototype.rack = function(rack) {
@@ -620,22 +649,22 @@ if(typeof(module) !== 'undefined'){
 			console.log.apply(console, arguments);
 			//TODO: DID I COMMENT THIS? what does it do? investigate
 
-			// let str = '';
-			// for (let i = 0; i < arguments.length; ++i) {
-			// 	if (i !== 0) str += ' ';
-			// 	str += '' + arguments[i];
-			// }
-			// //comment-only lines (e.g. comment header, magic number) get preserved:
-			// if (str.match(/^\s*;/)) {
-			// 	consoleContent.push(str);
-			// } else {
-			// 	//other lines get comments removed, and ;!source: directive added:
-			// 	let i = str.indexOf(';');
-			// 	if (i !== -1) {
-			// 		str = str.substr(0,i);
-			// 	}
-			// 	consoleContent.push(str + findLineNumber(2));
-			// }
+			let str = '';
+			for (let i = 0; i < arguments.length; ++i) {
+				if (i !== 0) str += ' ';
+				str += '' + arguments[i];
+			}
+			//comment-only lines (e.g. comment header, magic number) get preserved:
+			if (str.match(/^\s*;/)) {
+				consoleContent.push(str);
+			} else {
+				//other lines get comments removed, and ;!source: directive added:
+				let i = str.indexOf(';');
+				if (i !== -1) {
+					str = str.substr(0,i);
+				}
+				consoleContent.push(str + findLineNumber(2));
+			}
 		},
 		warn: function() { console.warn.apply(console, arguments); },
 		assert: function() { console.assert.apply(console, arguments); },
