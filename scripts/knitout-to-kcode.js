@@ -848,8 +848,11 @@ function knitoutToPasses(knitout, knitoutFile) {
 		//Handle operations:
 		if (op === 'inhook') {
 			throw `${knitoutFile}:${lineIdx+1} ERROR: cannot 'inhook' on this machine.`;
-		} else if (op === 'in') {
+		}
+
+		else if (op === 'in') {
 			let cs = args;
+			console.log('cs is', cs)
 			if (cs.length === 0) throw `${knitoutFile}:${lineIdx+1} ERROR: Can't bring in no carriers`;
 
 			cs.forEach(function(c){
@@ -858,16 +861,19 @@ function knitoutToPasses(knitout, knitoutFile) {
 				}
 			});
 
-			cs.forEach(function(c){
-				if (c in carriers) throw `${knitoutFile}:${lineIdx+1} ERROR: Can't bring in carrier '${c}' -- it is already active.`;
-			});
 
-			let inInfo = {op:op, cs:cs.slice()};
+			
 			//mark all carriers as pending:
 			cs.forEach(function(c){
-				let carrier = new Carrier(c);
-				carrier.in = inInfo;
-				carriers[c] = carrier;
+				let inInfo = {op:op, cs:cs.slice()};
+				if (c in carriers) {
+					console.log(`${knitoutFile}:${lineIdx+1} WARN: Can't bring in carrier '${c}' -- it is already active, ignoring`)
+				}
+				else {
+					let carrier = new Carrier(c);
+					carrier.in = inInfo;
+					carriers[c] = carrier;
+				}
 			});
 		} else if (op === 'releasehook') {
 			throw `${knitoutFile}:${lineIdx+1} ERROR: cannot 'releasehook' on this machine.`;
@@ -1114,7 +1120,7 @@ function knitoutToPasses(knitout, knitoutFile) {
 	{
 	
 		if (!(Object.entries(carriers).length === 0)){
-			throw `${knitoutFile}:${lineIdx+1} ERROR: All carriers need to be taken out, out missing on carriers: ${Object.keys(carriers)}.`;
+			console.log(`${knitoutFile}:${lineIdx+1} WARN: All carriers need to be taken out, out missing on carriers: ${Object.keys(carriers)}.`);
 		}
 	}
 
