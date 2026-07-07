@@ -3,7 +3,7 @@ let lines = [];
 
 // add menu for selecting these
 // these are the kniterate settings
-let defaultRollerAdvance = 450, defaultStitchNumber = 5, defaultSpeedNumber = 150;
+let defaultRollerAdvance = 450, defaultStitchNumber = 5, defaultSpeedNumber = 250;
 let defaultWasteCarrier = '6', defaultDrawCarrier = '1', defaultCastonCarrier = '2';
 let defaultCastonStyle = 2; castonCarrier = 3;// open tube
 
