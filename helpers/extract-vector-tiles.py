@@ -391,9 +391,10 @@ def end_element(name):
 		elif len(tile.accum["a2"]) == 0: tile.name += "-a1"
 		else: tile.name += "-a2"
 
-
-		assert(tile.name not in tiles)
-		tiles[tile.name] = tile
+		print('tile name is', tile.name)
+		# assert(tile.name not in tiles)
+		if tile.name not in tiles:
+			tiles[tile.name] = tile
 
 
 xmlparser.StartElementHandler = start_element
