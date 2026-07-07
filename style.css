@@ -9,6 +9,26 @@ code.knitout {
 	background:#eee;
 	border-radius:5px;
 }
+
+#aboutBox {
+	position: fixed;
+	z-index: 2;
+	left: calc(50% - 200px);
+	top: calc(40% - 150px);;
+	width: 400px;
+	background-color: white;
+	visibility: hidden;
+	padding: 10px;
+	border: 1px solid gray;
+	font-size: 1em;
+}
+
+#closeAbout {
+	float: right;
+	margin-bottom: -10px;
+	margin-top: 0px;
+}
+
 #dropTarget {
 	position:fixed;
 	left:0;
