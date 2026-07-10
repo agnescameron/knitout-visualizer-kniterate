@@ -20,6 +20,17 @@ window.addEventListener('resize', function(){
 	show.showKnitout.requestDraw();
 });
 
+// sets errors to alerts (might be a terrible idea)
+window.addEventListener("error", (evt) => {
+	console.log('got error')
+    if (evt.message) { // Chrome sometimes provides this
+      alert("error: "+evt.message +" at linenumber: "+evt.lineno+" of file: "+evt.filename);
+    } else {
+      alert("error: "+evt.type+" from element: "+(evt.srcElement || evt.target));
+    }
+
+ })
+
 show.showKnitout.clickLine = function(source) {
 	console.log("Jump to: " + source);
 	let line = parseInt(source);
@@ -298,7 +309,13 @@ async function saveKCode() {
 	}
 
 	if (wasteCheckbox.checked) {
-		knitout = addWasteSection(knitout);
+		try {
+			knitout = addWasteSection(knitout);
+		}
+		catch (e) {
+			 // statements to handle any exceptions
+			 console.log('hanfling', e); // pass exception object to error handler
+			}
 	}
 
 	convertKnitout(knitout);

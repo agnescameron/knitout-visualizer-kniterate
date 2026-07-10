@@ -15,16 +15,6 @@ const tubeRows = 5;
 
 let minN, maxN, wasteMin, wasteMax;
 
-// carrier object
-//	{
-//		id: ["1", "2", "3", "4", "5", "6"]
-//		castOn: [false, true],
-//		role: ["waste", draw", null]      
-//		isMainYarn: [false, true],
-//		dir: "+", 
-//		position: [L, R] 
-//	},
-
 class WasteSection {
 	constructor(carrierSet) {
 		this.carrierSet = carrierSet;
@@ -157,7 +147,6 @@ function findMinMax (lines) {
 function parseMainYarns(lines) {
 	const carriers = new CarrierSet([]);
 	if (lines.length > 0) {
-		// First line is always the cast-on
 		const castOnId = lines[0].split(' ')[1].charAt(0);
 		carriers.push({ id: castOnId, role: null, castOn: true, isMainYarn: true });
 		// lines.shift();
@@ -170,8 +159,8 @@ function parseMainYarns(lines) {
 				console.log(info);
 				const id = info[1].charAt(0);
 				if (!carriers.get(id)) {
-				carriers.push({ id, role: null, castOn: false, isMainYarn: true });
-				lines.splice(idx, 1);
+					carriers.push({ id, role: null, castOn: false, isMainYarn: true });
+					lines.splice(idx, 1); // remove the line where carrier is 'in'
 				}
 			}
 
@@ -354,7 +343,7 @@ function generateWasteSection(carrierSet, toDrop) {
 		wasteSection.push(`knit - f${n} ${drawCarrier}`);
 	}
 
-	// cast on both beds
+	// cast on both beds (final step)
 	if (carrierSet.castOn.dir === '-') {
 		wasteSection.push('rack 0.5');
 		for (let n = minN; n <= maxN; ++n) {
@@ -384,8 +373,22 @@ function addWasteSection (file) {
 	drawCarrier = defaultDrawCarrier;
 	castonStyle = defaultCastonStyle;
 
+
 	let lines = file.split('\n');
 	let mode = "A" // normal mode
+
+	// convert inhook to in commands
+	try {
+		lines.forEach(line => {
+			if (line.includes("inhook") || line.includes("releasehook") || line.includes("outhook")){
+				throw new Error("commands 'inhook', 'outhook' and 'releasehook' not valid for kniterate");
+				return;
+				}
+			})
+		}
+		catch(e) {
+			window.alert(e);
+		}
 
 	// file setup
 	const prefix = [
