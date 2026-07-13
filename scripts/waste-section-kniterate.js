@@ -3,14 +3,14 @@ let lines = [];
 
 // add menu for selecting these
 // these are the kniterate settings
-let defaultRollerAdvance = 450, defaultStitchNumber = 5, defaultSpeedNumber = 250;
+let defaultRollerAdvance = 450, defaultStitchNumber = 5, defaultSpeedNumber = 400;
 let defaultWasteCarrier = '6', defaultDrawCarrier = '1', defaultCastonCarrier = '2';
 let defaultCastonStyle = 2; castonCarrier = 3;// open tube
 
 let rollerAdvance, stitchNumber, speedNumber;
 let wasteCarrier, drawCarrier;
 let castonStyle;
-const wastePasses = 51;
+const wastePasses = 71;
 const tubeRows = 5;
 
 let minN, maxN, wasteMin, wasteMax;
@@ -220,6 +220,10 @@ function generateWasteSection(carrierSet, toDrop) {
 	// initialise the yarns with a tuck
 	wasteSection.push(`;initialize yarns`);
 
+	// slow for the first bit
+	wasteSection.push(`x-speed-number ${100}`);
+	wasteSection.push(`x-roller-advance ${rollerAdvance}`);
+
 	carrierSet.carriers.forEach( (carrier, i) => {
 		wasteSection.push(`in ${carrier.id}`);
 		let bed = 'f';
@@ -248,10 +252,13 @@ function generateWasteSection(carrierSet, toDrop) {
 	// knit wastePasses rows of the waste yarn. carrier ends
 	// wastePasses should always be odd in Mode A
 	wasteSection.push(`;waste yarn section`);
+	// now speed it up
+	wasteSection.push(`x-speed-number ${speedNumber}`);
 	for (let p = 0; p < wastePasses; ++p) {
 
 		// even numbered rows in +ve direction
 		if (p % 2 === 0) {
+			wasteSection.push(`x-roller-advance ${rollerAdvance}`);
 			for (let n = wasteMin; n <= wasteMax; ++n) {
 				if (n % 2 === 0) {
 					wasteSection.push(`knit + f${n} ${wasteCarrier}`, wasteCarrier);
@@ -263,6 +270,7 @@ function generateWasteSection(carrierSet, toDrop) {
 
 		// odd numbered rows in -ve direction
 		else {
+			wasteSection.push(`x-roller-advance ${0}`);
 			for (let n = wasteMax; n >= wasteMin; --n) {
 				if (n % 2 === 0) {
 					wasteSection.push(`knit - b${n} ${wasteCarrier}`, wasteCarrier);
@@ -328,6 +336,10 @@ function generateWasteSection(carrierSet, toDrop) {
 
 	// TUBE
 	// needs to drop out on LHS
+	// slow it down a bit
+	wasteSection.push(`x-speed-number ${200}`);
+	wasteSection.push(`x-roller-advance ${200}`);
+
 	for (let p = 0; p < tubeRows; ++p) {
 		if(p % 2 === 0){
 			for (let n = wasteMax; n >= wasteMin; --n) {
@@ -347,6 +359,7 @@ function generateWasteSection(carrierSet, toDrop) {
 		}
 	}
 
+	wasteSection.push(`x-roller-advance ${450}`);
 	// drop all needles on back bed
 	for (let n = wasteMin; n <= wasteMax; ++n) {
 		wasteSection.push(`drop b${n}`);
@@ -354,10 +367,13 @@ function generateWasteSection(carrierSet, toDrop) {
 
 	// draw thread -- always R-L
 	wasteSection.push(`;draw thread`);
+	wasteSection.push(`x-roller-advance ${100}`);
 	for (let n = maxN; n >= minN; --n) {
 		wasteSection.push(`knit - f${n} ${drawCarrier}`);
 	}
 
+	//set back to normal
+	wasteSection.push(`x-roller-advance ${rollerAdvance}`);
 	// cast on both beds (final step)
 	if (carrierSet.castOn.dir === '-') {
 		wasteSection.push('rack 0.5');
@@ -376,6 +392,9 @@ function generateWasteSection(carrierSet, toDrop) {
 	}
 
 	wasteSection.push(`rack 0`);
+
+	// back to default speed
+	wasteSection.push(`x-speed-number ${speedNumber}`);
 
 	return wasteSection.lines;
 }
@@ -406,6 +425,7 @@ function addWasteSection (file) {
 		}
 
 	// file setup
+		// oops never used this
 	const prefix = [
 			`x-roller-advance ${rollerAdvance}`, 
 			`x-stitch-number ${stitchNumber}`, 
