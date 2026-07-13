@@ -57,6 +57,13 @@ class CarrierSet {
 		carrier.position = side;
 	}
 
+	// set the position (happens every row)
+	setMain(id, main) {
+		const carrier = this.carriers.find(c => c.id === id);
+		if (!carrier) throw new Error(`Carrier ${id} not found`);
+		carrier.isMainYarn = main;
+	}
+
 	// set the direction they get introduced
 	setDir(id, dir) {
 		const carrier = this.carriers.find(c => c.id === id);
@@ -461,12 +468,13 @@ function addWasteSection (file) {
 	// check waste carrier is not in main yarns
 	// don't want waste last as subtle bug if it's the first one tucked
 	if(carrierSet.carriers.some(c => c.id === wasteCarrier)){
-		window.alert(`main carriers can't be the same as waste yarn (${wasteCarrier})`)
+		window.alert(`warning: carrier (${wasteCarrier}) is the waste yarn carrier, make sure it's what you want to use!`)
 		// right now draw and waste can't match- 
 		//but could set a check for this in future
+		// actually it's fine no you just don't need to include
+		// in the future can do a row check but tbh it's fine for now
 		carrierSet.setRole(wasteCarrier, "waste");
-
-		mode = "B"; // waste thread included in main yarns
+		carrierSet.setMain(wasteCarrier, false);
 	}
 	else {
 		carrierSet.push({ 
