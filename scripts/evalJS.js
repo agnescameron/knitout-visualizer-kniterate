@@ -415,6 +415,49 @@ Writer.prototype.getCarrierPosition = function(carrierId){
 };
 
 
+// this needs to be rewritten to include both beds
+Writer.prototype.getNeedleBed = function(needleNum){
+	// returns an array of which beds are currently holding a stitch
+	// at which position
+
+  for (let i = this._operations.length - 1; i >= 0; i--) {
+    const line = this._operations[i].toString().split(';')[0].trim(); // strip comment
+    const tokens = line.split(/\s+/);
+
+    // need at least: opcode, direction, needle, carrierId
+    if (tokens.length < 4) continue;
+
+    // console.log(tokens, needleNum);
+    const op = tokens[0];
+    const dir = tokens[1];
+    const stitch = tokens[2];
+    const carrier = tokens[tokens.length - 1]; // carrier is always last token
+
+
+    const stitchBed = stitch[0];
+    const stitchNum = Number(stitch.slice(1));
+
+    // we need to check what the last operation with the needle was
+    // and whether there has been a transfer since then
+    // potentially get xfers first and if _no_ transfers then go with the knit
+    // orrrr just check if the next row has the same stitch with a diff needle
+    // ughh but what about jacquard
+    // is this a comment or an essay
+    if(stitchNum === needleNum) {
+        // console.log(stitchBed, stitchNum);
+    		return stitchBed;
+    }
+
+    // skip non-stitch operations
+    if (!['knit', 'tuck', 'miss'].includes(op)) continue;
+
+  }
+
+  return null; // carrier not found in operations
+
+};
+
+
 // --- operations ---//
 Writer.prototype.rack = function(rack) {
 
