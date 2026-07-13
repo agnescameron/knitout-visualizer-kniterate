@@ -147,16 +147,20 @@ function findMinMax (lines) {
 function parseMainYarns(lines) {
 	const carriers = new CarrierSet([]);
 	if (lines.length > 0) {
-		const castOnId = lines[0].split(' ')[1].charAt(0);
-		carriers.push({ id: castOnId, role: null, castOn: true, isMainYarn: true });
-		// lines.shift();
+
+		// // get cast on separately
+		// const castOnId = lines[0].split(' ')[1].charAt(0);
+
+		// console.log("lines[0]", lines[0])
+		// carriers.push({ id: castOnId, role: null, castOn: true, isMainYarn: true });
+
+		let gotCastOn = false;
 
 		lines.forEach((ln, idx) => {
 			const info = removeComment(ln).trim().split(' ');
 
 			// Carrier introduced with 'in' command
 			if (info[0] === 'in' && info.length > 1) {
-				console.log(info);
 				const id = info[1].charAt(0);
 				if (!carriers.get(id)) {
 					carriers.push({ id, role: null, castOn: false, isMainYarn: true });
@@ -165,10 +169,19 @@ function parseMainYarns(lines) {
 			}
 
 			// First stitch for this carrier — capture direction
-			if (info.length > 2 && !info[0].includes(';')) {
+			if (info.length > 2 && !info[0].includes(';') && !info[0].includes('x')) {
 				const id = info[info.length - 1];
 				const carrier = carriers.get(id);
-				if (carrier && !carrier.dir) {
+
+				// get first knitted stitch to discern cast on yarn
+				if(!gotCastOn){
+					if(!carrier) carriers.push({ id: id, role: null, castOn: true, isMainYarn: true });
+					else carrier.castOn = true;
+					carriers.setDir(id, info[1]);
+					gotCastOn = true;
+				}
+
+				else if (carrier && !carrier.dir) {
 					carriers.setDir(id, info[1]); // "+" or "-"
 				}
 			}
@@ -283,6 +296,8 @@ function generateWasteSection(carrierSet, toDrop) {
 
 			if (carrier.castOn && carrier.dir === '+') rows = 1;
 			if (!carrier.castOn && carrier.dir === '-') rows = 1;
+
+			console.log("caston, dir rows", carrier, carrier.castOn, carrier.dir, rows)
 
 			// always do 1 row
 			for(i=0; i<rows; i++) {
