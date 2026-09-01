@@ -1007,45 +1007,10 @@ CellMachine.prototype.source = function CellMachine_source(source) {
 };
 
 CellMachine.prototype.setCarriers = function CellMachine_setCarriers(carriers) {
-	function makeStyle(cn, ci) {
-		//let's do rainbow around full-saturation colors, assuming 10 carriers.
-		let hue = (Math.floor((ci*5.5)%10) + 0.5) / 10.0 * 6.0;
-		let r, g, b;
-		if (hue < 1.0) {
-			r = 1.0;
-			g = (hue - 0.0);
-			b = 0.0
-		} else if (hue < 2.0) {
-			r = 1.0 - (hue - 1.0);
-			g = 1.0;
-			b = 0.0;
-		} else if (hue < 3.0) {
-			r = 0.0;
-			g = 1.0;
-			b = (hue - 2.0);
-		} else if (hue < 4.0) {
-			r = 0.0;
-			g = 1.0 - (hue - 3.0);
-			b = 1.0;
-		} else if (hue < 5.0) {
-			r = (hue - 4.0);
-			g = 0.0;
-			b = 1.0;
-		} else { /* (hue < 6.0) */
-			r = 1.0;
-			g = 0.0;
-			b = 1.0 - (hue - 5.0);
-		}
-
-		function h2(f) {
-			let val = Math.max(0, Math.min(255, Math.round(f * 255))).toString(16);
-			if (val.length < 2) val = "0" + val;
-			console.assert(val.length === 2, "h2 should always produce a pair of hex digits, darn it");
-			return val;
-		}
-
-		return {color:'#' + h2(r) + h2(g) + h2(b) }
-	};
+	function makeStyle(cn, ci, total) {
+		const palette = ['#e06666', '#e0a866', '#d4d466', '#7dbf7d', '#6699cc', '#a88cc9'];
+		return { color: palette[ci % palette.length] };
+	}
 
 	console.assert(this.carriers.length === 0, "Shouldn't set carriers twice.");
 	carriers.forEach(function(c,ci){

@@ -21,7 +21,7 @@ function parseKnitout(codeText, machine, useKnitoutAsSource=false) {
 			errors.push({lineNumber:lineNumber, text:info});
 		}
 		function addWarning(info) {
-			console.log("Parse Warning on line " + lineNumber + ": " + info);
+			// console.log("Parse Warning on line " + lineNumber + ": " + info);
 			warnings.push({lineNumber:lineNumber, text:info});
 		}
 

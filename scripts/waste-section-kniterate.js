@@ -228,7 +228,7 @@ function generateWasteSection(carrierSet, toDrop) {
 	wasteSection.push(`;initialize yarns`);
 
 	// slow for the first bit
-	wasteSection.push(`x-speed-number ${100}`);
+	wasteSection.push(`x-speed-number ${300}`);
 	wasteSection.push(`x-roller-advance ${rollerAdvance}`);
 
 	carrierSet.carriers.forEach( (carrier, i) => {
@@ -302,11 +302,12 @@ function generateWasteSection(carrierSet, toDrop) {
 	// knit one or two depending on direction
 	// cast on direction needs to be opposite
 	// need to keep track of rows from here
-	let rowCount = 0;
+
 	console.log("main yarns are", carrierSet.mainYarns);
 
 	carrierSet.mainYarns.forEach(carrier => 
 		{
+			let rowCount = 0;
 			rows = 2; // default
 
 			if (carrier.castOn && carrier.dir === '+') rows = 1;
